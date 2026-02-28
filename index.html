@@ -158,25 +158,57 @@
   }
   .tbtn:hover { color:var(--c); border-color:var(--cd); }
 
-  .hbtn { display:none; background:none; border:none; color:var(--txm); font-size:1.1em; cursor:none; padding:4px; }
+  /* FIX 2: Hamburger — bordered, always visible, works in both themes */
+  .hbtn {
+    display: none;
+    background: none;
+    border: 1px solid var(--br2);
+    color: var(--tx);
+    font-size: .88em;
+    cursor: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    line-height: 1.3;
+    transition: all .18s;
+  }
+  .hbtn:hover { color: var(--c); border-color: var(--cd); }
+  [data-theme="light"] .hbtn { color: var(--tx); border-color: var(--br2); }
+  [data-theme="light"] .hbtn:hover { color: #005e70; border-color: #007a90; }
   @media (pointer:coarse) { .tbtn,.hbtn { cursor:pointer; } }
 
-  /* drawer */
+  /* ── DRAWER ─────────────────────────────────── */
+  /* Overlay dims the page behind the menu */
+  .drawer-overlay {
+    display:none; position:fixed; inset:0; top:46px;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+    z-index:9997;
+    animation:fadeOv .2s var(--ease);
+  }
+  @keyframes fadeOv { from{opacity:0} to{opacity:1} }
+  .drawer-overlay.open { display:block; }
+
   .drawer {
-    display:none; position:fixed; top:46px; inset-inline:0;
-    background:var(--bg1); border-bottom:1px solid var(--br);
-    flex-direction:column; z-index:499;
+    display:none; position:fixed; top:46px; left:0; right:0;
+    background:#07090c;
+    border-bottom:1px solid rgba(0,229,255,.15);
+    flex-direction:column; z-index:9998;
     animation:slideD .2s var(--ease);
+    box-shadow:0 8px 32px rgba(0,0,0,.8);
   }
   @keyframes slideD { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
   .drawer.open { display:flex; }
   .drawer a {
-    font-size:.8em; color:var(--txm); text-decoration:none;
-    padding:14px 22px; border-bottom:1px solid var(--br);
-    transition:color .15s, background .15s;
+    font-size:.78em; color:var(--tx); text-decoration:none;
+    padding:14px 22px; border-bottom:1px solid rgba(0,229,255,.07);
+    transition:color .15s, background .15s; letter-spacing:.07em;
   }
-  .drawer a:hover { color:var(--c); background:rgba(0,229,255,.04); }
+  .drawer a:hover { color:var(--c); background:rgba(0,229,255,.05); }
   .drawer a:last-child { border-bottom:none; }
+  [data-theme="light"] .drawer { background:#1a2a38; }
+  [data-theme="light"] .drawer a { color:#c5dcea; }
+  [data-theme="light"] .drawer a:hover { color:var(--c); background:rgba(0,229,255,.07); }
 
   /* ── LAYOUT ──────────────────────────────────── */
   .wrap { max-width:920px; margin:0 auto; padding:66px 24px 80px; position:relative; z-index:1; }
@@ -189,6 +221,10 @@
     overflow:hidden;
     box-shadow:0 24px 80px rgba(0,0,0,.5), 0 0 0 1px rgba(0,229,255,.04);
     animation:twIn .6s var(--ease) both;
+  }
+  /* FIX 1: Light mode — replace harsh dark shadow with a soft blue-grey tint */
+  [data-theme="light"] .twin {
+    box-shadow: 0 4px 16px rgba(0,40,80,.06), 0 1px 4px rgba(0,40,80,.04);
   }
   @keyframes twIn { from{opacity:0;transform:translateY(22px) scale(.98)} to{opacity:1;transform:none} }
 
@@ -258,7 +294,17 @@
   .sh { display:flex; align-items:center; gap:11px; margin-bottom:28px; flex-wrap:wrap; }
   .sh-p { color:var(--txd); font-size:.77em; flex-shrink:0; }
   .sh-c { color:var(--c); font-size:.79em; font-weight:600; flex-shrink:0; }
-  .sh-f { color:var(--a); font-size:.73em; flex-shrink:0; }
+  /* FIX 3: Comments — amber in dark, dark amber in light — clearly readable */
+  .sh-f {
+    color: var(--a);
+    font-size: .73em;
+    flex-shrink: 0;
+    opacity: .9;
+  }
+  [data-theme="light"] .sh-f {
+    color: #9a6200;
+    opacity: 1;
+  }
   .sh-l { flex:1; height:1px; background:linear-gradient(to right,var(--br2),transparent); min-width:20px; }
 
   /* scroll reveal */
@@ -276,6 +322,7 @@
 
   .plbl { font-size:.61em; letter-spacing:.15em; text-transform:uppercase; color:var(--txd); margin-bottom:13px; }
   .plbl::before { content:'// '; color:var(--cd); }
+  [data-theme="light"] .plbl::before { color: #007a90; }
 
   .kvr { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--br); font-size:.74em; gap:10px; }
   .kvr:last-child { border-bottom:none; }
@@ -292,7 +339,6 @@
   .abt-txt .hla { color:var(--a); }
 
   /* ── EXPERIENCE ──────────────────────────────── */
-  /* FIXED: no timeline line overlapping date, simpler clean layout */
   .exp-item {
     display:grid; grid-template-columns:110px 1fr;
     gap:20px; padding:22px 0; border-bottom:1px solid var(--br);
@@ -320,7 +366,6 @@
     border-radius:var(--r); padding:28px 32px;
     position:relative; overflow:hidden;
   }
-  /* cyan left stripe */
   .pt-wrap::before {
     content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
     background:linear-gradient(to bottom, var(--c), transparent);
@@ -330,7 +375,18 @@
     font-family:var(--head); font-size:1.05em; font-weight:800;
     color:var(--tx); margin-bottom:6px; letter-spacing:-.01em;
   }
-  .pt-sub { font-size:.72em; color:var(--txd); margin-bottom:22px; letter-spacing:.04em; }
+  /* FIX 3: pt-sub comment — amber, legible in both modes */
+  .pt-sub {
+    font-size:.72em;
+    color: var(--a);
+    margin-bottom:22px;
+    letter-spacing:.04em;
+    opacity: .85;
+  }
+  [data-theme="light"] .pt-sub {
+    color: #9a6200;
+    opacity: 1;
+  }
 
   .pt-questions {
     display:grid; grid-template-columns:1fr 1fr;
@@ -456,6 +512,7 @@
   .em-link { text-decoration: none; color: var(--c); transition: color .15s; }
   .em-link:hover { color: #33eeff; }
   [data-theme="light"] .em-link { color: #005070; }
+
   /* ── FOOTER ──────────────────────────────────── */
   footer {
     max-width:920px; margin:0 auto; padding:24px 24px;
@@ -518,6 +575,7 @@
   </div>
 </nav>
 
+<div class="drawer-overlay" id="drawerOverlay"></div>
 <nav class="drawer" id="drawer" aria-label="Mobile menu">
   <a href="#about"          onclick="closeD()">./about</a>
   <a href="#experience"     onclick="closeD()">./experience</a>
@@ -702,7 +760,6 @@
         <p class="proj-desc">Moving company site with Firebase backend, quote calculator, and admin dashboard for managing bookings end-to-end.</p>
         <div class="proj-ft"><span>★ featured</span><span class="proj-own">woleadeoshun10</span></div>
       </a>
-
       <a class="proj-card" href="https://github.com/woleadeoshun10/pantryTracker" target="_blank" rel="noopener">
         <div class="proj-hd"><span class="proj-nm">Pantry Tracker</span><span class="proj-lang">JavaScript</span></div>
         <p class="proj-desc">Full-stack app to manage your kitchen inventory — add items, track expiry dates, and generate shopping lists automatically. Built with React and Firebase to reduce food waste.</p>
@@ -711,6 +768,11 @@
       <a class="proj-card" href="https://github.com/woleadeoshun10/qr-code-generator" target="_blank" rel="noopener">
         <div class="proj-hd"><span class="proj-nm">QR Code Generator</span><span class="proj-lang">JavaScript</span></div>
         <p class="proj-desc">Instant QR code generation from any URL or text input. Clean, fast, and works entirely in the browser.</p>
+        <div class="proj-ft"><span>★ featured</span><span class="proj-own">woleadeoshun10</span></div>
+      </a>
+      <a class="proj-card" href="https://github.com/woleadeoshun10/TwitchWeatherApp" target="_blank" rel="noopener">
+        <div class="proj-hd"><span class="proj-nm">Twitch + Weather API</span><span class="proj-lang">Node.js</span></div>
+        <p class="proj-desc">Full-stack app integrating Twitch API and OpenWeatherMap with OAuth 2.0 — built for synchronous real-time data handling.</p>
         <div class="proj-ft"><span>★ featured</span><span class="proj-own">woleadeoshun10</span></div>
       </a>
     </div>
@@ -723,8 +785,6 @@
   </section>
 
   <!-- ══ CERTIFICATIONS ════════════════════════ -->
-  <!-- Note: clicking "certs" in nav goes to this section.
-       The "View Credential" button opens the Credly page. -->
   <section id="certifications" class="reveal" aria-label="Certifications">
     <div class="sh">
       <span class="sh-p">$</span><span class="sh-c">ls ./certifications</span>
@@ -790,9 +850,6 @@
   <span>© 2026 Adewole Adeoshun</span>
 </footer>
 
-<!-- ══════════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════════ -->
 <script>
 (function(){
 'use strict';
@@ -826,18 +883,23 @@ tbtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') 
 /* ── MOBILE NAV ─────────────────────────────── */
 const hamBtn = document.getElementById('hamBtn');
 const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+
 hamBtn.addEventListener('click', () => {
   const open = drawer.classList.toggle('open');
+  drawerOverlay.classList.toggle('open', open);
   hamBtn.setAttribute('aria-expanded', open);
   hamBtn.textContent = open ? '✕' : '☰';
 });
 window.closeD = () => {
   drawer.classList.remove('open');
+  drawerOverlay.classList.remove('open');
   hamBtn.setAttribute('aria-expanded','false');
   hamBtn.textContent = '☰';
 };
+drawerOverlay.addEventListener('click', closeD);
 document.addEventListener('click', e => {
-  if (!drawer.contains(e.target) && !hamBtn.contains(e.target)) closeD();
+  if (!drawer.contains(e.target) && !hamBtn.contains(e.target) && !drawerOverlay.contains(e.target)) closeD();
 });
 
 /* ── SCROLL REVEAL ──────────────────────────── */
@@ -862,7 +924,7 @@ function mkPrompt() {
 
 const SCRIPT = [
   { k:'cmd', t:'whoami' },
-  { k:'out', h:'<span style="color:var(--c);font-weight:600">Adewole Adeoshun</span> &nbsp;<span style="color:var(--txd);font-size:.9em">// Software Engineer</span>' },
+  { k:'out', h:'<span style="color:var(--c);font-weight:600">Adewole Adeoshun</span> &nbsp;<span style="color:#4a7a90;font-size:.9em">// Software Engineer</span>' },
   { k:'gap' },
   { k:'cmd', t:'cat intro.txt' },
   { k:'out', h:'CS @ Queens College &nbsp;·&nbsp; <span style="color:var(--a)">May 2026</span> &nbsp;·&nbsp; New York City' },
@@ -901,7 +963,6 @@ function nextStep() {
     el.appendChild(mkPrompt());
     const c = document.createElement('span'); c.className='caret';
     el.appendChild(c); tbody.appendChild(el); tbody.scrollTop=tbody.scrollHeight;
-    // reveal buttons
     hbtns.style.animation = 'fadeUp .5s var(--ease) both';
     hbtns.style.opacity   = '1';
     return;
@@ -939,7 +1000,6 @@ async function loadRepos() {
   const CK  = 'aa-repos-v5';
   const TTL = 10*60*1000;
 
-  // Try session cache first
   try {
     const cached = sessionStorage.getItem(CK);
     if (cached) {
@@ -948,20 +1008,17 @@ async function loadRepos() {
     }
   } catch(_){}
 
-  // Try live GitHub API — silently replaces placeholder cards if it works
   try {
     const res = await fetch(
       `https://api.github.com/users/woleadeoshun10/starred?per_page=30&_=${Date.now()}`,
       { headers:{ Accept:'application/vnd.github.v3+json' } }
     );
-    if (!res.ok) return; // keep placeholders, no error shown
+    if (!res.ok) return;
     const data = await res.json();
     if (!data.length) return;
     try { sessionStorage.setItem(CK, JSON.stringify({ts:Date.now(),data})); } catch(_){}
     render(box, data);
-  } catch(_) {
-    // Placeholders stay — no error message shown to visitor
-  }
+  } catch(_) {}
 }
 
 const BB = 'Java web app built with JSP, Servlets, and MySQL — deployed on AWS EC2 with Tomcat. Teams create shared budgets, log categorized expenses, and monitor spending with role-based access.';
