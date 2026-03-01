@@ -151,12 +151,29 @@
   .nav-r { display:flex; align-items:center; gap:10px; }
 
   .tbtn {
-    font-family:var(--mono); font-size:.66em; background:none;
-    border:1px solid var(--br2); color:var(--txd); padding:4px 10px;
+    font-family:var(--mono); font-size:1em; background:none;
+    border:1px solid var(--br2); color:var(--txd); padding:4px 8px;
     border-radius:4px; cursor:none; letter-spacing:.05em;
     transition:all .18s; white-space:nowrap;
+    position:relative;
   }
   .tbtn:hover { color:var(--c); border-color:var(--cd); }
+  /* Illuminate the icon */
+  [data-theme="dark"]  .tbtn  { animation:iconGlow  3s ease-in-out infinite; }
+  [data-theme="light"] .tbtn  { animation:iconGlowA 3s ease-in-out infinite; }
+  @keyframes iconGlow  { 0%,100%{color:var(--txd);text-shadow:none} 50%{color:#ffe066;text-shadow:0 0 10px rgba(255,220,80,.7)} }
+  @keyframes iconGlowA { 0%,100%{color:var(--txd);text-shadow:none} 50%{color:#ffc947;text-shadow:0 0 10px rgba(255,180,30,.7)} }
+  .tbtn:hover { color:var(--c); border-color:var(--cd); animation:none; }
+  /* Tooltip */
+  .tbtn::after {
+    content: attr(data-tip);
+    position:absolute; bottom:-26px; left:50%; transform:translateX(-50%);
+    background:var(--sf); border:1px solid var(--br); color:var(--txm);
+    font-size:.6em; padding:3px 8px; border-radius:3px;
+    white-space:nowrap; pointer-events:none;
+    opacity:0; transition:opacity .2s;
+  }
+  .tbtn:hover::after { opacity:1; }
 
   /* FIX 2: Hamburger — bordered, always visible, works in both themes */
   .hbtn {
@@ -570,7 +587,7 @@
     <li><a href="#contact">contact</a></li>
   </ul>
   <div class="nav-r">
-    <button class="tbtn" id="themeBtn" aria-label="Toggle theme">[light]</button>
+    <button class="tbtn" id="themeBtn" aria-label="Toggle theme" data-tip="toggle theme">☀️</button>
     <button class="hbtn" id="hamBtn" aria-label="Menu" aria-expanded="false">☰</button>
   </div>
 </nav>
@@ -874,7 +891,7 @@ const saved = localStorage.getItem('aa-theme') || 'dark';
 
 function applyTheme(t) {
   html.setAttribute('data-theme', t);
-  tbtn.textContent = t === 'dark' ? '[light]' : '[dark]';
+  tbtn.textContent = t === 'dark' ? '☀️' : '🌙';
   localStorage.setItem('aa-theme', t);
 }
 applyTheme(saved);
