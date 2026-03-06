@@ -128,9 +128,24 @@
   [data-theme="light"] nav { background: rgba(238,242,246,.9); }
 
   .ndots { display:flex; gap:6px; flex-shrink:0; }
-  .nd { width:11px; height:11px; border-radius:50%; transition:filter .2s; }
-  .nd:hover { filter:brightness(1.3); }
-  .nd-r{background:#ff5f57} .nd-y{background:#febc2e} .nd-g{background:var(--c); box-shadow:0 0 8px rgba(0,229,255,.5)}
+  .nd { width:11px; height:11px; border-radius:50%; transition:filter .2s; border:none; padding:0; flex-shrink:0; }
+  .nd:hover { filter:brightness(1.4) drop-shadow(0 0 4px currentColor); cursor:none; transform:scale(1.15); }
+  @media (pointer:coarse) { .nd { cursor:pointer; } }
+  .nd-r{background:#ff5f57; color:#ff5f57;} .nd-y{background:#febc2e; color:#febc2e;} .nd-g{background:var(--c); box-shadow:0 0 8px rgba(0,229,255,.5); color:var(--c);}
+
+  /* Terminal states */
+  .twin.minimized .tbody,
+  .twin.minimized .hbtns-inner { display:none; }
+  .twin.minimized { box-shadow:none; }
+
+  .twin.maximized {
+    position:fixed; inset:50px 0 0 0; z-index:400;
+    border-radius:0; max-width:100%;
+    margin:0; width:100%;
+  }
+  .twin.maximized .tbody { min-height:calc(100vh - 100px); overflow-y:auto; }
+
+
 
   .nav-host { flex:1; text-align:center; font-size:.69em; color:var(--txd); letter-spacing:.07em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .nav-host .u { color:var(--c); }
@@ -606,9 +621,9 @@
 
   <!-- ══ HERO TERMINAL ═════════════════════════ -->
   <section class="hero" aria-label="Introduction" style="border:none; padding-bottom:0;">
-    <div class="twin" role="region" aria-label="Terminal intro">
+    <div class="twin" id="twin" role="region" aria-label="Terminal intro">
       <div class="tbar" aria-hidden="true">
-        <div class="ndots"><div class="nd nd-r"></div><div class="nd nd-y"></div><div class="nd nd-g"></div></div>
+        <div class="ndots"><button class="nd nd-r" id="btn-close" aria-label="Close terminal" title="Close"></button><button class="nd nd-y" id="btn-min" aria-label="Minimize terminal" title="Minimize"></button><button class="nd nd-g" id="btn-max" aria-label="Maximize terminal" title="Maximize"></button></div>
         <div class="tbar-title">adewole@portfolio — bash — 80×24</div>
       </div>
       <div class="tbody" id="tbody" aria-live="polite"></div>
@@ -662,9 +677,24 @@
       <span class="sh-f">--verbose</span><div class="sh-l"></div>
     </div>
 
+
     <div class="exp-item">
       <div class="exp-left">
         <div class="exp-dot" aria-hidden="true"></div>
+        <div class="exp-date">Mar<br/>2026</div>
+      </div>
+      <div>
+        <div class="exp-co">JPMorgan Chase</div>
+        <div class="exp-role">Software Engineering Job Simulation · Forage</div>
+        <ul class="exp-b">
+          <li>Built a Spring Boot microservice with Kafka and Spring Data JPA — consumed transaction messages, persisted records to H2 SQL, and integrated an external REST Incentive API</li>
+          <li>Exposed a balance query endpoint via a Spring controller and verified end-to-end behavior with Maven test suites</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-left">        <div class="exp-dot" aria-hidden="true"></div>
         <div class="exp-date">Jul – Sep<br/>2024</div>
       </div>
       <div>
@@ -742,6 +772,7 @@
       <div class="sg">
         <div class="sg-n">backend &amp; db</div>
         <span class="tag">Node.js</span><span class="tag">Express</span>
+        <span class="tag">Spring Boot</span><span class="tag">Kafka</span>
         <span class="tag">MongoDB</span><span class="tag">Firebase</span>
         <span class="tag">REST APIs</span><span class="tag">OAuth 2.0</span>
       </div>
@@ -749,6 +780,7 @@
         <div class="sg-n">cloud &amp; tools</div>
         <span class="tag">AWS EC2</span><span class="tag">AWS S3</span>
         <span class="tag">Auto Scaling</span><span class="tag">Git</span>
+        <span class="tag">Maven</span><span class="tag">Spring JPA</span>
         <span class="tag">Cloudflare</span><span class="tag">Tomcat</span>
       </div>
     </div>
@@ -896,6 +928,22 @@ function applyTheme(t) {
 }
 applyTheme(saved);
 tbtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+/* ── TERMINAL CONTROLS ──────────────────────── */
+const twin       = document.getElementById('twin');
+const heroSec    = document.querySelector('.hero');
+document.getElementById('btn-close').addEventListener('click', () => {
+  twin.classList.toggle('minimized');
+  twin.classList.remove('maximized');
+});
+document.getElementById('btn-min').addEventListener('click', () => {
+  twin.classList.toggle('minimized');
+  twin.classList.remove('maximized');
+});
+document.getElementById('btn-max').addEventListener('click', () => {
+  twin.classList.toggle('maximized');
+  twin.classList.remove('minimized');
+});
 
 /* ── MOBILE NAV ─────────────────────────────── */
 const hamBtn = document.getElementById('hamBtn');
